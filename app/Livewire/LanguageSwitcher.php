@@ -30,8 +30,19 @@ class LanguageSwitcher extends Component
         app()->setLocale($locale);
         $this->locale = $locale;
 
-        // Re-render all components on the page with the new locale.
+        // Notify listeners (Livewire components) about the locale change.
         $this->dispatch('locale-changed', locale: $locale);
+
+        // Re-fetch the current page via Livewire's SPA-style navigate so the
+        // entire layout (sidebar, header, breadcrumb, content) is re-rendered
+        // with the new locale. We dispatch the navigate call as a JS snippet
+        // so window.location.href resolves on the *browser* side — calling
+        // url()->current() server-side returns the Livewire /livewire/update
+        // endpoint, not the actual page URL.
+        //
+        // Unlike window.location.reload(), Livewire.navigate morphs the DOM
+        // in place, preserves scroll position, and does not flash the page.
+        $this->js('Livewire.navigate(window.location.href)');
     }
 
     public function render()
