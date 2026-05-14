@@ -1,0 +1,264 @@
+/* ----------------------------------------------------------------------------
+ * Real-Estate ERP — Admin theme (Skodash-style layout)
+ * Lightweight CSS that supports the layout structure from the provided files.
+ * --------------------------------------------------------------------------*/
+
+:root {
+  --re-sidebar-w: 260px;
+  --re-sidebar-bg: #1c2434;
+  --re-sidebar-color: #d3d8e0;
+  --re-sidebar-color-active: #ffffff;
+  --re-sidebar-hover: rgba(255, 255, 255, 0.07);
+  --re-sidebar-label: #8b95a7;
+  --re-header-h: 60px;
+  --re-header-bg: #ffffff;
+  --re-page-bg: #f3f6fa;
+  --re-primary: #0d6efd;
+  --re-border: #e5e9f2;
+}
+
+html[lang="km"] body,
+html[data-locale="km"] body {
+  font-family: 'Battambang', 'Roboto', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  font-family: 'Roboto', 'Battambang', system-ui, -apple-system, sans-serif;
+  background: var(--re-page-bg);
+  color: #2b3445;
+}
+
+/* Wrapper / layout grid */
+.wrapper {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: var(--re-sidebar-w) 1fr;
+  grid-template-rows: var(--re-header-h) 1fr;
+  grid-template-areas:
+    "sidebar header"
+    "sidebar main";
+}
+
+@media (max-width: 991.98px) {
+  .wrapper {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "header"
+      "main";
+  }
+  .sidebar-wrapper {
+    position: fixed;
+    inset: 0 auto 0 0;
+    width: var(--re-sidebar-w);
+    z-index: 1040;
+    transform: translateX(-100%);
+    transition: transform .2s ease-in-out;
+  }
+  .wrapper.sidebar-open .sidebar-wrapper { transform: translateX(0); }
+  .wrapper.sidebar-open .overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 1030;
+  }
+}
+
+/* Sidebar */
+.sidebar-wrapper {
+  grid-area: sidebar;
+  background: var(--re-sidebar-bg);
+  color: var(--re-sidebar-color);
+  border-right: 1px solid rgba(255,255,255,.05);
+  overflow-y: auto;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: 1rem 1.1rem;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+.sidebar-header .logo-text {
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+}
+.sidebar-header .toggle-icon { color: rgba(255,255,255,.6); cursor: pointer; }
+.metismenu {
+  list-style: none;
+  padding: .5rem 0 4rem;
+  margin: 0;
+}
+.metismenu .menu-label {
+  color: var(--re-sidebar-label);
+  text-transform: uppercase;
+  font-size: .68rem;
+  letter-spacing: .08em;
+  padding: .8rem 1.1rem .4rem;
+  font-weight: 600;
+}
+.metismenu li > a {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .55rem 1.1rem;
+  color: var(--re-sidebar-color);
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  transition: background .15s ease, color .15s ease;
+}
+.metismenu li > a:hover,
+.metismenu li.mm-active > a {
+  background: var(--re-sidebar-hover);
+  color: var(--re-sidebar-color-active);
+  border-left-color: var(--re-primary);
+}
+.metismenu .parent-icon {
+  width: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.05rem;
+}
+.metismenu .menu-title { font-size: .9rem; flex: 1; }
+
+/* Header */
+.top-header {
+  grid-area: header;
+  background: var(--re-header-bg);
+  border-bottom: 1px solid var(--re-border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.top-header .navbar { min-height: var(--re-header-h); padding: 0 1.25rem; }
+.top-header .searchbar { position: relative; max-width: 320px; flex: 1; }
+.top-header .searchbar .form-control {
+  padding-left: 2.4rem;
+  background: var(--re-page-bg);
+  border-color: var(--re-page-bg);
+}
+.top-header .search-icon { left: 0; padding: 0 .75rem; color: #6c757d; }
+.top-header .user-img { object-fit: cover; }
+.top-header .nav-link { color: #2b3445; }
+
+/* Page content */
+.page-content {
+  grid-area: main;
+  padding: 1.25rem;
+  min-height: calc(100vh - var(--re-header-h));
+}
+.page-breadcrumb .breadcrumb-title {
+  font-size: 1rem;
+  font-weight: 600;
+  border-right: 1px solid var(--re-border);
+}
+
+/* Cards */
+.card {
+  border-color: var(--re-border);
+  border-radius: 12px;
+}
+.card-header {
+  background: transparent;
+  border-bottom: 1px solid var(--re-border);
+  font-weight: 600;
+}
+
+/* Buttons */
+.btn {
+  border-radius: 8px;
+}
+
+/* DataTables Bootstrap5 tweaks */
+.dataTables_wrapper .dataTables_filter input { border-radius: 8px; }
+.dataTables_wrapper .dataTables_length select { border-radius: 8px; }
+
+/* Tom Select / Bootstrap 5 polish */
+.ts-control { min-height: 38px; }
+
+/* Back-to-top */
+.back-to-top {
+  position: fixed;
+  right: 20px;
+  bottom: 80px;
+  width: 38px;
+  height: 38px;
+  background: var(--re-primary);
+  color: #fff !important;
+  border-radius: 50%;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  box-shadow: 0 8px 22px rgba(13,110,253,.35);
+  z-index: 999;
+}
+.back-to-top.is-visible { display: inline-flex; }
+
+/* Status badges */
+.status-pill {
+  display: inline-block;
+  padding: .25rem .55rem;
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.status-pill.active,
+.status-pill.paid,
+.status-pill.approved,
+.status-pill.success,
+.status-pill.available,
+.status-pill.posted,
+.status-pill.completed { background: #e6f7ee; color: #047857; }
+
+.status-pill.inactive,
+.status-pill.cancelled,
+.status-pill.rejected,
+.status-pill.failed,
+.status-pill.blocked,
+.status-pill.terminated,
+.status-pill.expired { background: #fde2e1; color: #991b1b; }
+
+.status-pill.pending,
+.status-pill.draft,
+.status-pill.unpaid,
+.status-pill.overdue,
+.status-pill.requested,
+.status-pill.partial_paid,
+.status-pill.partial,
+.status-pill.new,
+.status-pill.contacted,
+.status-pill.follow_up,
+.status-pill.planning,
+.status-pill.in_progress,
+.status-pill.reserved,
+.status-pill.maintenance { background: #fff4e0; color: #b45309; }
+
+.status-pill.default,
+.status-pill.archived { background: #eef2f7; color: #475569; }
+
+/* Auth page */
+.auth-wrapper {
+  background: linear-gradient(135deg, #eef2ff 0%, #ffffff 60%, #f0fdfa 100%);
+}
+
+/* Fixed pagination wrapper */
+.pagination-fixed {
+  border-radius: 0;
+  margin-top: 1rem;
+}
+
+/* Forms */
+.form-label small { color: #6b7280; }
+.invalid-feedback { display: block; }
+
+/* DataTables responsive collapsed indicator */
+table.dataTable.dtr-inline.collapsed > tbody > tr > td.dtr-control:before {
+  background-color: var(--re-primary);
+}
