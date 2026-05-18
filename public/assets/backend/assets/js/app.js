@@ -30,55 +30,81 @@
   }
 
   // --- SweetAlert2 delete confirmation --------------------------------
-  function bindDeleteConfirms(scope = document) {
-    scope.querySelectorAll('form[data-confirm-delete], button[data-confirm-delete], a[data-confirm-delete]').forEach((el) => {
-      if (el.dataset.confirmBound) return;
-      el.dataset.confirmBound = '1';
-
-      const handler = function (e) {
-        e.preventDefault();
-        e.stopPropagation();
-        const message = el.getAttribute('data-confirm-message') || 'Are you sure you want to delete this item?';
-        Swal.fire({
-          title: 'Confirm',
-          text: message,
-          icon: 'warning',
-          showCancelButton: true,
-          confirmButtonText: el.getAttribute('data-confirm-button') || 'Delete',
-          cancelButtonText: el.getAttribute('data-cancel-button') || 'Cancel',
-          confirmButtonColor: '#d33',
-          reverseButtons: true,
-        }).then((r) => {
-          if (!r.isConfirmed) return;
-          if (el.tagName === 'FORM') { el.submit(); return; }
-          if (el.tagName === 'A' && el.href) {
-            // Build a temporary POST form for safety (CSRF + spoof method).
-            const form = document.createElement('form');
-            form.method = 'POST';
-            form.action = el.getAttribute('href');
-            const csrf = document.createElement('input');
-            csrf.type = 'hidden'; csrf.name = '_token'; csrf.value = csrfToken || '';
-            form.appendChild(csrf);
-            const method = document.createElement('input');
-            method.type = 'hidden'; method.name = '_method'; method.value = el.getAttribute('data-method') || 'DELETE';
-            form.appendChild(method);
-            document.body.appendChild(form);
-            form.submit();
-            return;
-          }
-          if (el.tagName === 'BUTTON' && el.form) { el.form.submit(); }
-        });
-      };
-
-      if (el.tagName === 'FORM') {
-        el.addEventListener('submit', function (e) {
-          if (!el.dataset.confirmed) handler(e);
-          else delete el.dataset.confirmed;
-        });
-      } else {
-        el.addEventListener('click', handler);
-      }
+  //
+  // We use *event delegation* on `document` instead of per-element listeners.
+  // This is critical because Yajra server-side DataTables replaces the entire
+  // <tbody> on every redraw (pagination, search, sort, ajax reload), so any
+  // listener bound to a row's form is lost. Delegation on `document` survives
+  // arbitrary DOM replacement and means rows added later (DataTable redraw,
+  // Livewire morph, manual injection) all get the SweetAlert2 confirm flow
+  // automatically.
+  function runDeleteConfirm(el) {
+    const message = el.getAttribute('data-confirm-message') || 'Are you sure you want to delete this item?';
+    return Swal.fire({
+      title: el.getAttribute('data-confirm-title') || 'Confirm',
+      text: message,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: el.getAttribute('data-confirm-button') || 'Delete',
+      cancelButtonText: el.getAttribute('data-cancel-button') || 'Cancel',
+      confirmButtonColor: '#d33',
+      reverseButtons: true,
     });
+  }
+
+  function submitConfirmedForm(form) {
+    // Mark form so the delegated submit handler lets it through this time.
+    form.dataset.confirmed = '1';
+    if (typeof form.requestSubmit === 'function') form.requestSubmit();
+    else form.submit();
+  }
+
+  function bindDeleteConfirmDelegation() {
+    // Click on any element (or descendant) marked with data-confirm-delete.
+    // Forms also fire their own `submit` event handled below; the click path
+    // covers buttons/anchors and short-circuits the form submit before it runs.
+    document.addEventListener('click', function (e) {
+      const trigger = e.target.closest('[data-confirm-delete]');
+      if (!trigger) return;
+      // For buttons inside forms, intercept the submit instead so we go
+      // through the form's submission path (CSRF + _method already wired).
+      if (trigger.tagName === 'BUTTON' && trigger.form && trigger.form.hasAttribute('data-confirm-delete')) {
+        return; // let the form's submit handler below take over
+      }
+      e.preventDefault();
+      e.stopPropagation();
+      runDeleteConfirm(trigger).then((r) => {
+        if (!r.isConfirmed) return;
+        if (trigger.tagName === 'FORM') { submitConfirmedForm(trigger); return; }
+        if (trigger.tagName === 'A' && trigger.getAttribute('href')) {
+          const form = document.createElement('form');
+          form.method = 'POST';
+          form.action = trigger.getAttribute('href');
+          const csrf = document.createElement('input');
+          csrf.type = 'hidden'; csrf.name = '_token'; csrf.value = csrfToken || '';
+          form.appendChild(csrf);
+          const method = document.createElement('input');
+          method.type = 'hidden'; method.name = '_method'; method.value = trigger.getAttribute('data-method') || 'DELETE';
+          form.appendChild(method);
+          document.body.appendChild(form);
+          form.submit();
+          return;
+        }
+        if (trigger.tagName === 'BUTTON' && trigger.form) { submitConfirmedForm(trigger.form); }
+      });
+    }, true);
+
+    // Forms with data-confirm-delete: intercept submit (works for redrawn rows).
+    document.addEventListener('submit', function (e) {
+      const form = e.target.closest('form[data-confirm-delete]');
+      if (!form) return;
+      if (form.dataset.confirmed) { delete form.dataset.confirmed; return; }
+      e.preventDefault();
+      e.stopPropagation();
+      runDeleteConfirm(form).then((r) => {
+        if (r.isConfirmed) submitConfirmedForm(form);
+      });
+    }, true);
   }
 
   // --- flatpickr + Tom Select auto-init -------------------------------
@@ -153,26 +179,30 @@
         processing: '<div class="spinner-border spinner-border-sm text-primary"></div>',
         paginate: { previous: '<i class="bi bi-chevron-left"></i>', next: '<i class="bi bi-chevron-right"></i>' }
       },
-      drawCallback: () => initFieldEnhancements(),
+      drawCallback: function () {
+        // DataTables replaces <tbody> on every draw — re-init flatpickr /
+        // Tom Select for any newly-rendered fields. Delete confirms are
+        // handled globally via event delegation, so no re-binding is needed.
+        initFieldEnhancements();
+      },
     }, extra));
   };
 
   // --- Boot ------------------------------------------------------------
   document.addEventListener('DOMContentLoaded', () => {
-    bindDeleteConfirms();
+    bindDeleteConfirmDelegation();
     initFieldEnhancements();
     initLayoutInteractions();
   });
 
-  // Re-initialize after Livewire re-renders.
+  // Re-initialize field enhancements after Livewire re-renders. Delete
+  // confirms use document-level delegation and don't need re-binding.
   document.addEventListener('livewire:navigated', () => {
-    bindDeleteConfirms();
     initFieldEnhancements();
   });
   document.addEventListener('livewire:initialized', () => {
     if (window.Livewire) {
       Livewire.hook('morph.updated', ({ el }) => {
-        bindDeleteConfirms(el);
         initFieldEnhancements(el);
       });
     }
