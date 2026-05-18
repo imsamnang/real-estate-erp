@@ -66,10 +66,13 @@ body {
   background: var(--re-sidebar-bg);
   color: var(--re-sidebar-color);
   border-right: 1px solid rgba(255,255,255,.05);
-  overflow-y: auto;
   position: sticky;
   top: 0;
   height: 100vh;
+  /* flex column so the menu list scrolls independently of the fixed header */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 .sidebar-header {
   display: flex;
@@ -77,6 +80,7 @@ body {
   gap: .75rem;
   padding: 1rem 1.1rem;
   border-bottom: 1px solid rgba(255,255,255,.08);
+  flex: 0 0 auto;
 }
 .sidebar-header .logo-text {
   color: #fff;
@@ -92,7 +96,21 @@ body {
   list-style: none;
   padding: .5rem 0 4rem;
   margin: 0;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  /* slim dark-friendly scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,.18) transparent;
 }
+.metismenu::-webkit-scrollbar { width: 6px; }
+.metismenu::-webkit-scrollbar-track { background: transparent; }
+.metismenu::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,.18);
+  border-radius: 3px;
+}
+.metismenu::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.32); }
 .metismenu .menu-label {
   color: var(--re-sidebar-label);
   text-transform: uppercase;

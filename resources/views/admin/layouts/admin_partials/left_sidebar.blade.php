@@ -84,7 +84,7 @@
   $user = auth()->user();
 @endphp
 
-<aside class="sidebar-wrapper" data-simplebar="true">
+<aside class="sidebar-wrapper">
   <div class="sidebar-header">
     <div>
       <span class="logo-icon-circle d-inline-flex align-items-center justify-content-center bg-primary text-white"
