@@ -18,8 +18,12 @@
 <script src="https://cdn.datatables.net/responsive/3.0.3/js/dataTables.responsive.min.js"></script>
 <script src="https://cdn.datatables.net/responsive/3.0.3/js/responsive.bootstrap5.min.js"></script>
 
-{{-- PHPFlasher --}}
-@flasher_render
+{{-- PHPFlasher assets are auto-injected by FlasherMiddleware (inject_assets=true). --}}
+{{-- We intentionally do NOT use @flasher_render here because, in php-flasher 2.6.x, --}}
+{{-- the compiled directive `<?php app('flasher')->render('html'); ?>` does NOT echo --}}
+{{-- its output — it silently drains stored envelopes, so the middleware that runs --}}
+{{-- afterwards finds an empty storage and emits no toast. Letting only the --}}
+{{-- middleware render keeps envelopes intact until response time. --}}
 
 {{-- App-wide helpers (CSRF, axios-like fetch, DataTable defaults) --}}
 <script src="{{ asset('assets/backend/assets/js/app.js') }}"></script>
