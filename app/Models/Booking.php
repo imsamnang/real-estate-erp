@@ -12,11 +12,11 @@ class Booking extends Model
 
     protected $table = 'bookings';
 
-    protected $fillable = ['company_id', 'branch_id', 'customer_id', 'property_id', 'booking_no', 'booking_date', 'expiry_date', 'booking_amount', 'currency', 'note', 'status', 'created_by'];
+    protected $fillable = ['company_id', 'branch_id', 'customer_id', 'property_id', 'booking_no', 'booking_date', 'expiry_date', 'booking_amount', 'currency', 'note', 'status', 'created_by', 'cancelled_by', 'cancelled_at'];
 
     protected function casts(): array
     {
-        return ['company_id' => 'integer', 'branch_id' => 'integer', 'customer_id' => 'integer', 'property_id' => 'integer', 'booking_date' => 'datetime', 'expiry_date' => 'date', 'booking_amount' => 'decimal:2', 'created_by' => 'integer'];
+        return ['company_id' => 'integer', 'branch_id' => 'integer', 'customer_id' => 'integer', 'property_id' => 'integer', 'booking_date' => 'datetime', 'expiry_date' => 'date', 'booking_amount' => 'decimal:2', 'created_by' => 'integer', 'cancelled_by' => 'integer', 'cancelled_at' => 'datetime'];
     }
 
     public function company(): BelongsTo
@@ -42,5 +42,10 @@ class Booking extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function canceller(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'cancelled_by');
     }
 }

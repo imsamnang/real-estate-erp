@@ -70,7 +70,8 @@ class GenerateErpModules extends Command
 
             $casts = [];
             foreach ($cfg['fields'] as $f) {
-                [$name, $type] = $f;
+                [$name, $type, , $opts] = array_pad($f, 4, []);
+                $opts = $opts ?? [];
                 if ($type === 'date') {
                     $casts[$name] = 'date';
                 } elseif ($type === 'datetime') {
@@ -81,6 +82,10 @@ class GenerateErpModules extends Command
                     $casts[$name] = 'integer';
                 } elseif ($type === 'bool') {
                     $casts[$name] = 'boolean';
+                } elseif ($type === 'json' && empty($opts['multi_select_model'])) {
+                    // Scalar JSON columns (notifications.data, audit_logs.old_values, etc.)
+                    // get an array cast so Laravel serializes/deserializes the column.
+                    $casts[$name] = 'array';
                 }
             }
 

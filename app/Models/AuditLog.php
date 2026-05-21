@@ -11,11 +11,11 @@ class AuditLog extends Model
 
     public $timestamps = false;
 
-    protected $fillable = ['user_id', 'company_id', 'branch_id', 'action', 'module', 'auditable_type', 'auditable_id', 'ip_address'];
+    protected $fillable = ['user_id', 'company_id', 'branch_id', 'action', 'module', 'auditable_type', 'auditable_id', 'old_values', 'new_values', 'ip_address', 'user_agent'];
 
     protected function casts(): array
     {
-        return ['user_id' => 'integer', 'company_id' => 'integer', 'branch_id' => 'integer', 'auditable_id' => 'integer'];
+        return ['user_id' => 'integer', 'company_id' => 'integer', 'branch_id' => 'integer', 'auditable_id' => 'integer', 'old_values' => 'array', 'new_values' => 'array'];
     }
 
     public function user(): BelongsTo

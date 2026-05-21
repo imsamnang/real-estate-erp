@@ -6,6 +6,9 @@
     @php
       [$name, $type, $labelKey, $opts] = array_pad($f, 4, []);
       $opts = $opts ?? [];
+      // Read-only fields are system-set (timestamps, audit blobs, *_by user
+      // ids set by approvers/cancellers) and are not rendered in the form.
+      if (! empty($opts['read_only'])) continue;
       $label = __('messages.'.$labelKey);
       $value = old($name, $row?->{$name});
       $required = ($opts['required'] ?? false) || ($row === null && ($opts['required_on_create'] ?? false));
@@ -91,8 +94,11 @@
             @php
               $relName = $name;
               $current = collect();
-              if ($row) {
-                  $current = method_exists($row, $relName) ? $row->{$relName}()->pluck($row->{$relName}()->getRelated()->getKeyName())->all() : [];
+              if ($row && method_exists($row, $relName)) {
+                  $rel = $row->{$relName}();
+                  $related = $rel->getRelated();
+                  $qualifiedKey = $related->getTable().'.'.$related->getKeyName();
+                  $current = $rel->pluck($qualifiedKey)->all();
               }
               $current = old($name, $current);
             @endphp

@@ -12,11 +12,11 @@ class Lead extends Model
 
     protected $table = 'leads';
 
-    protected $fillable = ['company_id', 'branch_id', 'customer_id', 'lead_no', 'name', 'phone', 'email', 'source', 'interested_property_type', 'budget_min', 'budget_max', 'note', 'assigned_to', 'status', 'next_follow_up_at'];
+    protected $fillable = ['company_id', 'branch_id', 'customer_id', 'lead_no', 'name', 'phone', 'email', 'source', 'interested_property_type', 'budget_min', 'budget_max', 'note', 'assigned_to', 'status', 'next_follow_up_at', 'converted_at'];
 
     protected function casts(): array
     {
-        return ['company_id' => 'integer', 'branch_id' => 'integer', 'customer_id' => 'integer', 'budget_min' => 'decimal:2', 'budget_max' => 'decimal:2', 'assigned_to' => 'integer', 'next_follow_up_at' => 'datetime'];
+        return ['company_id' => 'integer', 'branch_id' => 'integer', 'customer_id' => 'integer', 'budget_min' => 'decimal:2', 'budget_max' => 'decimal:2', 'assigned_to' => 'integer', 'next_follow_up_at' => 'datetime', 'converted_at' => 'datetime'];
     }
 
     public function company(): BelongsTo

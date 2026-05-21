@@ -13,11 +13,11 @@ class NotificationLog extends Model
 
     protected $keyType = 'string';
 
-    protected $fillable = ['user_id', 'company_id', 'branch_id', 'type', 'title', 'message', 'channel', 'read_at'];
+    protected $fillable = ['user_id', 'company_id', 'branch_id', 'type', 'title', 'message', 'data', 'channel', 'read_at'];
 
     protected function casts(): array
     {
-        return ['user_id' => 'integer', 'company_id' => 'integer', 'branch_id' => 'integer', 'read_at' => 'datetime'];
+        return ['user_id' => 'integer', 'company_id' => 'integer', 'branch_id' => 'integer', 'data' => 'array', 'read_at' => 'datetime'];
     }
 
     public function user(): BelongsTo

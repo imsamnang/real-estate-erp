@@ -71,6 +71,8 @@
           <dd class="col-sm-9">
             @if($type === 'enum' && $val)
               <span class="status-pill {{ $val }}">{{ $val }}</span>
+            @elseif($type === 'json' && empty($opts['multi_select_model']) && $val !== null && $val !== '')
+              <pre class="mb-0 small bg-light p-2 rounded">{{ is_array($val) || is_object($val) ? json_encode($val, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE) : $val }}</pre>
             @else
               {{ $val !== null && $val !== '' ? $val : '—' }}
             @endif

@@ -12,11 +12,11 @@ class Refund extends Model
 
     protected $table = 'refunds';
 
-    protected $fillable = ['company_id', 'branch_id', 'customer_id', 'payment_id', 'refund_no', 'refund_date', 'amount', 'reason', 'status', 'requested_by'];
+    protected $fillable = ['company_id', 'branch_id', 'customer_id', 'payment_id', 'refund_no', 'refund_date', 'amount', 'reason', 'status', 'requested_by', 'approved_by', 'refunded_by'];
 
     protected function casts(): array
     {
-        return ['company_id' => 'integer', 'branch_id' => 'integer', 'customer_id' => 'integer', 'payment_id' => 'integer', 'refund_date' => 'datetime', 'amount' => 'decimal:2', 'requested_by' => 'integer'];
+        return ['company_id' => 'integer', 'branch_id' => 'integer', 'customer_id' => 'integer', 'payment_id' => 'integer', 'refund_date' => 'datetime', 'amount' => 'decimal:2', 'requested_by' => 'integer', 'approved_by' => 'integer', 'refunded_by' => 'integer'];
     }
 
     public function company(): BelongsTo
@@ -42,5 +42,15 @@ class Refund extends Model
     public function requester(): BelongsTo
     {
         return $this->belongsTo(User::class, 'requested_by');
+    }
+
+    public function approver(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approved_by');
+    }
+
+    public function refunder(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'refunded_by');
     }
 }
