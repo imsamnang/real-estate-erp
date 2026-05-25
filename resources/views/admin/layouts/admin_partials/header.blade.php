@@ -24,7 +24,11 @@
 
         {{-- User dropdown --}}
         <li class="nav-item dropdown dropdown-large">
-          <a class="nav-link dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown">
+          <a class="nav-link dropdown-toggle dropdown-toggle-nocaret d-inline-flex align-items-center"
+             href="#"
+             role="button"
+             data-bs-toggle="dropdown"
+             aria-expanded="false">
             <div class="user-setting d-flex align-items-center gap-1">
               @if(auth()->user()->avatar)
                 <img src="{{ asset('storage/'.auth()->user()->avatar) }}" class="user-img rounded-circle" alt="">
@@ -35,44 +39,33 @@
               @endif
               <div class="user-name d-none d-sm-block ms-2">{{ auth()->user()->display_name }}</div>
             </div>
+            <i class="bi bi-chevron-down dropdown-chevron ms-1"></i>
           </a>
-          <ul class="dropdown-menu dropdown-menu-end">
-            <li>
-              <a class="dropdown-item" href="#">
-                <div class="d-flex align-items-center">
-                  <div class="ms-1">
-                    <h6 class="mb-0 dropdown-user-name">{{ auth()->user()->display_name }}</h6>
-                    <small class="mb-0 dropdown-user-designation text-secondary">{{ auth()->user()->position ?? '—' }}</small>
-                  </div>
-                </div>
-              </a>
+          <ul class="dropdown-menu dropdown-menu-end user-dropdown-menu">
+            <li class="user-dropdown-header">
+              <h6 class="mb-0 dropdown-user-name">{{ auth()->user()->display_name }}</h6>
+              <small class="d-block dropdown-user-designation text-secondary">{{ auth()->user()->position ?? '—' }}</small>
             </li>
             <li><hr class="dropdown-divider"></li>
             <li>
               <a class="dropdown-item" href="#">
-                <div class="d-flex align-items-center">
-                  <div class="setting-icon"><i class="bi bi-person-fill"></i></div>
-                  <div class="setting-text ms-3"><span>{{ __('messages.common.profile') }}</span></div>
-                </div>
+                <span class="setting-icon"><i class="bi bi-person-fill"></i></span>
+                <span class="setting-text">{{ __('messages.common.profile') }}</span>
               </a>
             </li>
             <li>
               <a class="dropdown-item" href="{{ route('admin.dashboard') }}">
-                <div class="d-flex align-items-center">
-                  <div class="setting-icon"><i class="bi bi-speedometer"></i></div>
-                  <div class="setting-text ms-3"><span>{{ __('messages.common.dashboard') }}</span></div>
-                </div>
+                <span class="setting-icon"><i class="bi bi-speedometer"></i></span>
+                <span class="setting-text">{{ __('messages.common.dashboard') }}</span>
               </a>
             </li>
             <li><hr class="dropdown-divider"></li>
             <li>
-              <form action="{{ route('admin.logout') }}" method="POST">
+              <form action="{{ route('admin.logout') }}" method="POST" class="m-0">
                 @csrf
                 <button type="submit" class="dropdown-item">
-                  <div class="d-flex align-items-center">
-                    <div class="setting-icon"><i class="bi bi-lock-fill"></i></div>
-                    <div class="setting-text ms-3"><span>{{ __('messages.common.logout') }}</span></div>
-                  </div>
+                  <span class="setting-icon"><i class="bi bi-box-arrow-right"></i></span>
+                  <span class="setting-text">{{ __('messages.common.logout') }}</span>
                 </button>
               </form>
             </li>
