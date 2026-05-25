@@ -12,11 +12,11 @@ class ApprovalRequest extends Model
 
     protected $table = 'approval_requests';
 
-    protected $fillable = ['company_id', 'branch_id', 'request_no', 'approvable_type', 'approvable_id', 'requested_by', 'current_approver_id', 'reason', 'status'];
+    protected $fillable = ['company_id', 'branch_id', 'request_no', 'approvable_type', 'approvable_id', 'requested_by', 'current_approver_id', 'reason', 'status', 'requested_at', 'completed_at'];
 
     protected function casts(): array
     {
-        return ['company_id' => 'integer', 'branch_id' => 'integer', 'approvable_id' => 'integer', 'requested_by' => 'integer', 'current_approver_id' => 'integer'];
+        return ['company_id' => 'integer', 'branch_id' => 'integer', 'approvable_id' => 'integer', 'requested_by' => 'integer', 'current_approver_id' => 'integer', 'requested_at' => 'datetime', 'completed_at' => 'datetime'];
     }
 
     public function company(): BelongsTo

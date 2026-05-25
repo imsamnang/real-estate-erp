@@ -299,6 +299,13 @@ abstract class BaseCrudController extends Controller
             [$name, $type, , $opts] = array_pad($f, 4, []);
             $opts = $opts ?? [];
 
+            // Read-only fields are never assigned from request data — they're
+            // system-set (e.g. cancelled_at, approved_by, audit blobs) and only
+            // shown on the index/show pages.
+            if (! empty($opts['read_only'])) {
+                continue;
+            }
+
             if ($type === 'json' && isset($opts['multi_select_model'])) {
                 continue; // pivot, handled later
             }
@@ -374,6 +381,13 @@ abstract class BaseCrudController extends Controller
         foreach ($cfg['fields'] as $f) {
             [$name, $type, , $opts] = array_pad($f, 4, []);
             $opts = $opts ?? [];
+
+            // Read-only fields are not validated — they're never submitted by
+            // the form (skipped in _form.blade.php).
+            if (! empty($opts['read_only'])) {
+                continue;
+            }
+
             $rule = [];
             $isAuto = (bool) ($opts['auto'] ?? false);
             $required = (($opts['required'] ?? false) && ! $isAuto)

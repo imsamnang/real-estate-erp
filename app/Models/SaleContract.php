@@ -12,11 +12,11 @@ class SaleContract extends Model
 
     protected $table = 'sale_contracts';
 
-    protected $fillable = ['company_id', 'branch_id', 'customer_id', 'property_id', 'booking_id', 'contract_no', 'contract_date', 'sale_price', 'discount_amount', 'tax_amount', 'total_amount', 'deposit_amount', 'paid_amount', 'balance_amount', 'payment_type', 'handover_date', 'title_transfer_date', 'note', 'status', 'created_by'];
+    protected $fillable = ['company_id', 'branch_id', 'customer_id', 'property_id', 'booking_id', 'contract_no', 'contract_date', 'sale_price', 'discount_amount', 'tax_amount', 'total_amount', 'deposit_amount', 'paid_amount', 'balance_amount', 'payment_type', 'handover_date', 'title_transfer_date', 'note', 'status', 'created_by', 'approved_by', 'approved_at'];
 
     protected function casts(): array
     {
-        return ['company_id' => 'integer', 'branch_id' => 'integer', 'customer_id' => 'integer', 'property_id' => 'integer', 'booking_id' => 'integer', 'contract_date' => 'date', 'sale_price' => 'decimal:2', 'discount_amount' => 'decimal:2', 'tax_amount' => 'decimal:2', 'total_amount' => 'decimal:2', 'deposit_amount' => 'decimal:2', 'paid_amount' => 'decimal:2', 'balance_amount' => 'decimal:2', 'handover_date' => 'date', 'title_transfer_date' => 'date', 'created_by' => 'integer'];
+        return ['company_id' => 'integer', 'branch_id' => 'integer', 'customer_id' => 'integer', 'property_id' => 'integer', 'booking_id' => 'integer', 'contract_date' => 'date', 'sale_price' => 'decimal:2', 'discount_amount' => 'decimal:2', 'tax_amount' => 'decimal:2', 'total_amount' => 'decimal:2', 'deposit_amount' => 'decimal:2', 'paid_amount' => 'decimal:2', 'balance_amount' => 'decimal:2', 'handover_date' => 'date', 'title_transfer_date' => 'date', 'created_by' => 'integer', 'approved_by' => 'integer', 'approved_at' => 'datetime'];
     }
 
     public function company(): BelongsTo
@@ -47,5 +47,10 @@ class SaleContract extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function approver(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approved_by');
     }
 }

@@ -12,11 +12,11 @@ class Expense extends Model
 
     protected $table = 'expenses';
 
-    protected $fillable = ['company_id', 'branch_id', 'expense_category_id', 'expense_no', 'expense_date', 'amount', 'payment_method_id', 'description', 'status', 'created_by'];
+    protected $fillable = ['company_id', 'branch_id', 'expense_category_id', 'expense_no', 'expense_date', 'amount', 'payment_method_id', 'description', 'attachment', 'status', 'created_by', 'approved_by'];
 
     protected function casts(): array
     {
-        return ['company_id' => 'integer', 'branch_id' => 'integer', 'expense_category_id' => 'integer', 'expense_date' => 'date', 'amount' => 'decimal:2', 'payment_method_id' => 'integer', 'created_by' => 'integer'];
+        return ['company_id' => 'integer', 'branch_id' => 'integer', 'expense_category_id' => 'integer', 'expense_date' => 'date', 'amount' => 'decimal:2', 'payment_method_id' => 'integer', 'created_by' => 'integer', 'approved_by' => 'integer'];
     }
 
     public function company(): BelongsTo
@@ -42,5 +42,10 @@ class Expense extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function approver(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'approved_by');
     }
 }
